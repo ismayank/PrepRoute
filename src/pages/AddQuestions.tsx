@@ -149,8 +149,15 @@ export default function AddQuestions() {
     // Load first question if available
     if (questions.length > 0) {
       setQuestionForm(questions[0]);
+      editor?.commands.setContent(questions[0].question);
     }
   }, [currentTest]);
+
+  useEffect(() => {
+    if (questions.length > 0 && currentQuestionIndex < questions.length) {
+      editor?.commands.setContent(questions[currentQuestionIndex].question);
+    }
+  }, [currentQuestionIndex, questions, editor]);
 
   const getSubjectName = (subjectId: string) => {
     const subject = subjects.find(s => s.id === subjectId);
@@ -168,7 +175,7 @@ export default function AddQuestions() {
         const parsedQuestions: Question[] = results.data.map((row: any) => ({
           id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
           type: row.type || "mcq",
-          question: row.question || "",
+          question: `<p>${row.question || ""}</p>`,
           option1: row.option1 || "",
           option2: row.option2 || "",
           option3: row.option3 || "",
@@ -272,6 +279,7 @@ export default function AddQuestions() {
   const handleEditQuestion = (index: number) => {
     setCurrentQuestionIndex(index);
     setQuestionForm(questions[index]);
+    editor?.commands.setContent(questions[index].question);
   };
 
   const handleSaveAndContinue = async () => {
