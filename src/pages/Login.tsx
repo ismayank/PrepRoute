@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 import logo from "../assets/logo.svg";
 import illustration from "../assets/login-illustration.svg";
@@ -11,6 +12,7 @@ export default function Login() {
 
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -134,24 +136,42 @@ export default function Login() {
                 Password
               </label>
 
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter Password"
-                className="
-                  w-full
-                  h-[58px]
-                  px-5
-                  rounded-xl
-                  border
-                  border-[#D1D5DB]
-                  outline-none
-                  text-[16px]
-                  focus:border-[#5B84F1]
-                  transition-all
-                "
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter Password"
+                  className="
+                    w-full
+                    h-[58px]
+                    px-5
+                    pr-12
+                    rounded-xl
+                    border
+                    border-[#D1D5DB]
+                    outline-none
+                    text-[16px]
+                    focus:border-[#5B84F1]
+                    transition-all
+                  "
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="
+                    absolute
+                    right-4
+                    top-1/2
+                    -translate-y-1/2
+                    text-[#6B7280]
+                    hover:text-[#374151]
+                    transition-colors
+                  "
+                >
+                  {showPassword ? <FiEyeOff size={24} /> : <FiEye size={24} />}
+                </button>
+              </div>
             </div>
 
             {/* Error */}
