@@ -554,6 +554,13 @@ export default function AddQuestions() {
                   <FiUpload size={16} />
                   Upload CSV
                 </button>
+                <a
+                  href="/demo-questions.csv"
+                  download
+                  className="px-4 py-2 text-sm border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+                >
+                  Download Demo CSV
+                </a>
               </div>
             </div>
 

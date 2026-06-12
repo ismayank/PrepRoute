@@ -1,0 +1,6 @@
+type,question,option1,option2,option3,option4,correct_option,difficulty,explanation,topic,sub_topic,media_url
+mcq,What is 2 + 2?,1,2,3,4,option2,easy,Basic addition of small numbers,,,
+mcq,What is the capital of France?,Berlin,Madrid,Paris,London,option3,easy,Paris is the capital city of France,,,
+mcq,Which planet is closest to the Sun?,Venus,Mercury,Mars,Earth,option2,easy,Mercury is the smallest and closest planet to the Sun,,,
+mcq,What color is a banana?,Blue,Green,Yellow,Red,option3,easy,Ripe bananas are typically yellow,,,
+mcq,How many continents are there?,5,6,7,8,option3,easy,There are 7 continents on Earth,,,
