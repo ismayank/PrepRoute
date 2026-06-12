@@ -25,7 +25,7 @@ export default function Login() {
         password,
       });
 
-      const token = response?.data?.token;
+      const token = response.data?.token;
 
       if (!token) {
         throw new Error("Token not received");
@@ -33,7 +33,7 @@ export default function Login() {
 
       localStorage.setItem("token", token);
 
-      if (response?.data?.user) {
+      if (response.data?.user) {
         localStorage.setItem(
           "user",
           JSON.stringify(response.data.user)
