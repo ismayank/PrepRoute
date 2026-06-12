@@ -8,7 +8,7 @@ interface QuestionSidebarProps {
   onAddQuestion?: () => void;
 }
 
-export default function QuestionSidebar({ onEditQuestion, onDeleteQuestion, onAddQuestion }: QuestionSidebarProps) {
+export default function QuestionSidebar({ onEditQuestion, onDeleteQuestion: _onDeleteQuestion, onAddQuestion }: QuestionSidebarProps) {
   const navigate = useNavigate();
   const { questions, currentTest } = useTestStore();
 
@@ -29,7 +29,7 @@ export default function QuestionSidebar({ onEditQuestion, onDeleteQuestion, onAd
         </div>
 
         <div className="space-y-3 mb-6">
-          {questions.map((q, i) => (
+          {questions.map((_q, i) => (
             <div
               key={i}
               className="h-[42px] rounded-lg border border-[#4CC38A] bg-green-50 px-4 flex items-center justify-between text-[#27AE60] text-sm cursor-pointer"
@@ -52,7 +52,7 @@ export default function QuestionSidebar({ onEditQuestion, onDeleteQuestion, onAd
               </div>
             </div>
           ))}
-          {Array.from({ length: Math.max(0, (currentTest?.totalQuestions || 50) - questions.length) }).map((_, i) => (
+          {Array.from({ length: Math.max(0, (currentTest?.total_questions || 50) - questions.length) }).map((_, i) => (
             <div
               key={`empty-${i}`}
               className="h-[42px] rounded-lg border border-gray-200 px-4 flex items-center text-gray-400 text-sm"
@@ -65,7 +65,7 @@ export default function QuestionSidebar({ onEditQuestion, onDeleteQuestion, onAd
         {onAddQuestion && (
           <button
             onClick={onAddQuestion}
-            className="w-full py-3 bg-[#6D80F7] text-white rounded-xl hover:bg-[#5a6ddf] transition-colors"
+            className="w-full py-3 bg-[#6D80F7] text-white rounded-xl hover:bg-[#5a6de3] transition-colors"
           >
             + Add Another Question
           </button>

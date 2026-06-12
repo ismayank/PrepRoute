@@ -38,12 +38,10 @@ export default function PreviewPublish() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [subTopics, setSubTopics] = useState<SubTopic[]>([]);
-  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       if (!id) return;
-      setFetching(true);
       try {
         // Fetch subjects
         const subjectsResult = await subjectService.getAllSubjects();
@@ -53,7 +51,7 @@ export default function PreviewPublish() {
         // Fetch test if not in store
         let test = currentTest;
         if (!test) {
-          test = tests.find(t => t.id === id);
+          test = tests.find(t => t.id === id) || null;
         }
         if (!test) {
           const testResult = await testService.getTestById(id);
@@ -90,8 +88,6 @@ export default function PreviewPublish() {
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
-      } finally {
-        setFetching(false);
       }
     };
 

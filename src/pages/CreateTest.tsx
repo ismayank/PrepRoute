@@ -1,5 +1,4 @@
 import DashboardLayout from "../layouts/DashboardLayout";
-import { FiChevronDown } from "react-icons/fi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { testService, subjectService, topicService } from "../api/testService";
@@ -32,8 +31,6 @@ export default function CreateTest() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [subTopics, setSubTopics] = useState<SubTopic[]>([]);
-  const [selectedSubjectId, setSelectedSubjectId] = useState("");
-  const [selectedTopicId, setSelectedTopicId] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -100,7 +97,6 @@ export default function CreateTest() {
   };
 
   const handleSubjectChange = async (subjectId: string) => {
-    setSelectedSubjectId(subjectId);
     setFormData(prev => ({ ...prev, subject: subjectId, topics: [], sub_topics: [] }));
     if (subjectId) {
       try {
@@ -122,23 +118,22 @@ export default function CreateTest() {
     }
   };
 
-  const handleTopicsChange = async (selectedTopicId: string) => {
-    setSelectedTopicId(selectedTopicId);
-    const topicsArray = selectedTopicId ? [selectedTopicId] : [];
+  const handleTopicsChange = async (topicId: string) => {
+    const topicsArray = topicId ? [topicId] : [];
     setFormData(prev => ({ ...prev, topics: topicsArray, sub_topics: [] }));
-    if (selectedTopicId) {
+    if (topicId) {
       try {
-        const result = await topicService.getSubTopicsByTopics([selectedTopicId]);
+        const result = await topicService.getSubTopicsByTopics([topicId]);
         setSubTopics(result.data || [
-          { id: "st1", name: "Linear Equations", topic_id: selectedTopicId },
-          { id: "st2", name: "Quadratic Equations", topic_id: selectedTopicId }
+          { id: "st1", name: "Linear Equations", topic_id: topicId },
+          { id: "st2", name: "Quadratic Equations", topic_id: topicId }
         ]);
       } catch (error) {
         console.error("Failed to fetch subtopics:", error);
         // Use mock subtopics as fallback
         setSubTopics([
-          { id: "st1", name: "Linear Equations", topic_id: selectedTopicId },
-          { id: "st2", name: "Quadratic Equations", topic_id: selectedTopicId }
+          { id: "st1", name: "Linear Equations", topic_id: topicId },
+          { id: "st2", name: "Quadratic Equations", topic_id: topicId }
         ]);
       }
     } else {
@@ -149,9 +144,7 @@ export default function CreateTest() {
   const handleSaveDraft = async () => {
     try {
       setLoading(true);
-      // Do NOT send status in create test request!
-      const { status, ...rest } = formData;
-      const testData = rest;
+      const testData = formData;
       console.log("Sending create test data (draft):", testData);
       const result = await testService.createTest(testData);
       console.log("Create test result (draft):", result);
@@ -177,9 +170,7 @@ export default function CreateTest() {
     try {
       setLoading(true);
       let result;
-      // Do NOT send status in create test request!
-      const { status, ...rest } = formData;
-      const testData = rest;
+      const testData = formData;
       console.log("Sending test data (next):", testData);
       if (id) {
         result = await testService.updateTest(id, formData);

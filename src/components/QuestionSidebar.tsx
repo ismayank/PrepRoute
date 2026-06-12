@@ -14,10 +14,7 @@ import {
   FiMessageCircle,
   FiBell,
   FiSettings,
-  FiChevronRight,
-  FiBarChart2,
-  FiEdit3,
-  FiSearch
+  FiChevronRight
 } from "react-icons/fi";
 import logo from "../assets/logo.svg";
 
@@ -34,8 +31,8 @@ export default function QuestionSidebar({
   backPath = "/create-test", 
   currentQuestionIndex = 0, 
   onEditQuestion, 
-  onDeleteQuestion, 
-  onAddQuestion,
+  onDeleteQuestion: _onDeleteQuestion, 
+  onAddQuestion: _onAddQuestion,
   title = "Question creation"
 }: Props) {
   const navigate = useNavigate();
@@ -104,7 +101,7 @@ export default function QuestionSidebar({
           </div>
 
           <div className="flex-1 space-y-3 overflow-y-auto no-scrollbar mb-5">
-            {questions.map((q, i) => (
+            {questions.map((_q, i) => (
               <div
                 key={i}
                 className={`h-[52px] rounded-xl border px-4 flex items-center justify-between cursor-pointer transition-colors ${

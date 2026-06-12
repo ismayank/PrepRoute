@@ -71,7 +71,7 @@ export default function EditTestModal({ test, isOpen, onClose }: Props) {
     }
   };
 
-  const handleSubjectChange = async (subjectId: string, initialLoad = false) => {
+  const handleSubjectChange = async (subjectId: string, _initialLoad = false) => {
     setFormData(prev => ({ ...prev, subject: subjectId, topics: [], sub_topics: [] }));
     try {
       const result = await topicService.getTopicsBySubject(subjectId);

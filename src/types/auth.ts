@@ -1,18 +1,17 @@
 import { z } from "zod";
 
 export const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
+  userId: z.string().min(1, "User ID is required"),
   password: z.string().min(1, "Password is required"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
 export interface AuthResponse {
-  status: string;
+  success: boolean;
   message?: string;
-  token?: string;
-  user?: {
-    username: string;
-    role: string;
+  data?: {
+    token: string;
+    user: any;
   };
 }

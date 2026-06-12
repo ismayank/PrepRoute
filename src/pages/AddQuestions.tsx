@@ -29,6 +29,7 @@ import {
   FiImage,
 } from "react-icons/fi";
 import QuestionSidebar from "../components/QuestionSidebar";
+import type { Question } from "../types/question";
 
 export default function AddQuestions() {
   const navigate = useNavigate();
@@ -40,27 +41,22 @@ export default function AddQuestions() {
   const [subtopics, setSubtopics] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<any[]>([]);
 
-  const [questionForm, setQuestionForm] = useState({
+  const [questionForm, setQuestionForm] = useState<Question>({
+    id: "",
     type: "mcq",
     question: "",
     option1: "",
     option2: "",
     option3: "",
     option4: "",
-    correct_option: "option1" as "option1" | "option2" | "option3" | "option4",
+    correct_option: "option1",
     explanation: "",
-    difficulty: "easy" as "easy" | "medium" | "hard",
+    difficulty: "easy",
     topic: "",
     sub_topic: "",
     media_url: "",
+    test_id: "",
   });
-
-  // Mock data
-  const mockSubjects: Record<string, string> = {
-    "1": "Mathematics",
-    "2": "Physics",
-    "3": "Chemistry",
-  };
 
   const mockTopicsList = [
     { id: "t1", name: "Algebra" },
@@ -178,18 +174,18 @@ export default function AddQuestions() {
     if (currentQuestionIndex < updatedQuestions.length) {
       // Edit existing question
       updatedQuestions[currentQuestionIndex] = {
-        id: questions[currentQuestionIndex].id,
         ...questionForm,
-        test_id: currentTest?.id,
+        id: questions[currentQuestionIndex].id,
+        test_id: currentTest?.id || "",
       };
       setQuestions(updatedQuestions);
       toast.success("Question updated!");
     } else {
       // Create new question
       const newQuestion = {
-        id: Date.now().toString(),
         ...questionForm,
-        test_id: currentTest?.id,
+        id: Date.now().toString(),
+        test_id: currentTest?.id || "",
       };
       addQuestion(newQuestion);
       toast.success("Question added!");
@@ -205,6 +201,7 @@ export default function AddQuestions() {
     // Create new empty question
     setCurrentQuestionIndex(questions.length);
     setQuestionForm({
+      id: "",
       type: "mcq",
       question: "",
       option1: "",
@@ -223,6 +220,7 @@ export default function AddQuestions() {
           ? currentTest.sub_topics[0]
           : "",
       media_url: "",
+      test_id: currentTest?.id || "",
     });
   };
 
@@ -250,7 +248,7 @@ export default function AddQuestions() {
       
       // Now update the test with question IDs!
       if (currentTest?.id && bulkResult?.data) {
-        const questionIds = bulkResult.data.map(q => q.id);
+        const questionIds = bulkResult.data.map((q: Question) => q.id);
         console.log("Updating test with question IDs:", questionIds);
         const updateTestPayload = {
           questions: questionIds,
@@ -300,6 +298,7 @@ export default function AddQuestions() {
       editor?.commands.setContent(nextQuestion.question || "");
     } else {
       setQuestionForm({
+        id: "",
         type: "mcq",
         question: "",
         option1: "",
@@ -312,6 +311,7 @@ export default function AddQuestions() {
         topic: currentTest?.topics?.[0] || "",
         sub_topic: currentTest?.sub_topics?.[0] || "",
         media_url: "",
+        test_id: currentTest?.id || "",
       });
 
       editor?.commands.clearContent();
@@ -333,6 +333,7 @@ export default function AddQuestions() {
         setCurrentQuestionIndex(0);
         editor?.commands.clearContent();
         setQuestionForm({
+          id: "",
           type: "mcq",
           question: "",
           option1: "",
@@ -345,6 +346,7 @@ export default function AddQuestions() {
           topic: "",
           sub_topic: "",
           media_url: "",
+          test_id: currentTest?.id || "",
         });
       }
 

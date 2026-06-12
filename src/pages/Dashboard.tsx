@@ -87,7 +87,7 @@ export default function Dashboard() {
 
     const matchesDate =
       !dateFilter ||
-      new Date(test.created_at || test.createdAt || new Date().toISOString())
+      new Date(test.created_at || new Date().toISOString())
         .toISOString()
         .split("T")[0] === dateFilter;
 
