@@ -1,5 +1,5 @@
 import DashboardLayout from "../layouts/DashboardLayout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTestStore } from "../store/testStore";
 import { questionService } from "../api/questionService";
@@ -11,6 +11,7 @@ import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
 import ArStickers from "../assets/ar_stickers.svg";
+import Papa from "papaparse";
 
 import {
   FiEdit2,
@@ -27,6 +28,7 @@ import {
   FiAlignRight,
   FiList,
   FiImage,
+  FiUpload,
 } from "react-icons/fi";
 import QuestionSidebar from "../components/QuestionSidebar";
 import type { Question } from "../types/question";
@@ -40,6 +42,7 @@ export default function AddQuestions() {
   const [topics, setTopics] = useState<any[]>([]);
   const [subtopics, setSubtopics] = useState<any[]>([]);
   const [subjects, setSubjects] = useState<any[]>([]);
+  const csvFileInputRef = useRef<HTMLInputElement>(null);
 
   const [questionForm, setQuestionForm] = useState<Question>({
     id: "",
@@ -152,6 +155,48 @@ export default function AddQuestions() {
   const getSubjectName = (subjectId: string) => {
     const subject = subjects.find(s => s.id === subjectId);
     return subject?.name || subjectId;
+  };
+
+  const handleCSVFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const parsedQuestions: Question[] = results.data.map((row: any) => ({
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          type: row.type || "mcq",
+          question: row.question || "",
+          option1: row.option1 || "",
+          option2: row.option2 || "",
+          option3: row.option3 || "",
+          option4: row.option4 || "",
+          correct_option: row.correct_option || "option1",
+          explanation: row.explanation || "",
+          difficulty: row.difficulty || "easy",
+          topic: row.topic || (currentTest?.topics && currentTest.topics.length > 0 ? currentTest.topics[0] : ""),
+          sub_topic: row.sub_topic || (currentTest?.sub_topics && currentTest.sub_topics.length > 0 ? currentTest.sub_topics[0] : ""),
+          media_url: row.media_url || "",
+          test_id: currentTest?.id || "",
+        }));
+
+        const validQuestions = parsedQuestions.filter(q => q.question && q.option1 && q.option2 && q.option3 && q.option4);
+
+        if (validQuestions.length === 0) {
+          toast.error("No valid questions found in CSV");
+          return;
+        }
+
+        setQuestions([...questions, ...validQuestions]);
+        toast.success(`Successfully imported ${validQuestions.length} questions!`);
+      },
+      error: (error) => {
+        console.error("Error parsing CSV:", error);
+        toast.error("Failed to parse CSV file");
+      },
+    });
   };
 
   const handleSaveQuestion = () => {
@@ -487,19 +532,30 @@ export default function AddQuestions() {
         {/* Question Form */}
         <div className="max-w-5xl mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-lg font-semibold text-blue-600">
-              Question {currentQuestionIndex + 1}/
-              {currentTest?.total_questions || 50}
-            </h2>
-            <div className="flex gap-3">
-              <button className="px-4 py-2 text-sm border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-                + MCQ
-              </button>
-              <button className="px-4 py-2 text-sm border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-                ↓ CSV
-              </button>
+              <h2 className="text-lg font-semibold text-blue-600">
+                Question {currentQuestionIndex + 1}/
+                {currentTest?.total_questions || 50}
+              </h2>
+              <div className="flex gap-3">
+                <button className="px-4 py-2 text-sm border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+                  + MCQ
+                </button>
+                <input
+                  type="file"
+                  accept=".csv"
+                  ref={csvFileInputRef}
+                  onChange={handleCSVFileChange}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => csvFileInputRef.current?.click()}
+                  className="px-4 py-2 text-sm border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+                >
+                  <FiUpload size={16} />
+                  Upload CSV
+                </button>
+              </div>
             </div>
-          </div>
 
           <div className="flex items-center gap-2 mb-4">
             <button
